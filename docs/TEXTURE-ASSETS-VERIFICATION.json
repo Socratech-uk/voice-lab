@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-18",
+  "versions": {
+    "3d-lab": "0.21.1",
+    "foundry": "0.6.1",
+    "voice-lab": "1.11.1",
+    "files": "0.1.1",
+    "local-ai": "0.23.2",
+    "mcp": "0.24.28"
+  },
+  "inputs": {
+    "suite": {
+      "archive": "creative-suite-20261018-195152(1).zip",
+      "bytes": 21815663,
+      "sha256": "77d6cd838302ab11d0d531ccfb00c3a221105bca4dbe883b8212d47d80803515"
+    },
+    "capp": {
+      "archive": "capp-v1(20261018-210710).zip",
+      "bytes": 112908650,
+      "sha256": "252b198bff4d0731725b651a69bccb621dd948d7349a9a6f02459e6ee321f6b9"
+    }
+  },
+  "suppliedModel": {
+    "filename": "front (5) edited edited selected.glb",
+    "sha256": "c59fb6145f1386faf126bfe89feff9cb36fcdba9395becafd131271414f542b0",
+    "triangles": 389773,
+    "embeddedImages": 0
+  },
+  "browser": {
+    "ok": true,
+    "checks": [
+      "54 asset cards browse using visible previews with no model/blob downloads",
+      "a high-detail NPC uses visual per-view alignment, stretching and fine nudges",
+      "legacy reference overlays accept more than 500k triangles without reducing the source",
+      "baked alignment persists per view and exported GLB embeds textures without changing triangle count",
+      "reopening a cached model uses metadata-only migration and retains embedded textures",
+      "a failed embedded texture load keeps the previous asset and reports the failure",
+      "the alignment dialog remains usable on a phone",
+      "the UI imports, saves and reopens a GLB above 64 MiB through bounded native chunks"
+    ],
+    "errors": [],
+    "triangles": 779546,
+    "nativeWindows": false
+  },
+  "policy": {
+    "checks": [
+      "strict",
+      "relaxed",
+      "default",
+      "platform"
+    ],
+    "ok": true,
+    "baselineChromiumBlobFetch": {
+      "ok": false,
+      "error": "Failed to fetch"
+    },
+    "nativeWindows": false
+  },
+  "checks": {
+    "labFullNode": {
+      "passLines": 329
+    },
+    "labDurableStorageNode": 17,
+    "labStoragePython": 5,
+    "foundryNode": "passed",
+    "foundryPython": {
+      "ran": 48,
+      "skipped": 1,
+      "reason": "Optional external actual Action Lab export fixture not provided."
+    },
+    "largeNativeFilesPython": 3,
+    "filesNativeStoragePython": 5,
+    "filesGeneratedScaffold": "passed",
+    "localAI": "source/worker tests passed; no model inference",
+    "publicDocs": "passed: 62 pages, 26 components, 75 explicit downloads",
+    "standard": {
+      "ok": true,
+      "checks": 633
+    },
+    "docs": {
+      "ok": false,
+      "baselineIssues": 19,
+      "sameIssuesAsPristineUpload": true
+    },
+    "cappBuild": "Ordinary capp-protocol 0.28.0 --no-sealed build and registry/capsule reconstruction passed in isolated current-source copy.",
+    "serviceClosure": "Actual source owner-service closure and Files generated scaffold passed; installed self-host/native qualification unrun.",
+    "suiteBrowser": "Built Lab/Foundry/Voice UIs passed against real native Files workers with an IPC/picker shim."
+  },
+  "notRun": [
+    "native compilation/build",
+    "CTest",
+    "installed Windows/WebView2",
+    "CUDA/model inference",
+    "performance",
+    "gameplay"
+  ],
+  "dependency": {
+    "three": "0.160.1, fetched as the existing pinned third-party dependency omitted by the work ZIP",
+    "archiveSha256": "d462f9bb4a53d0a75f5ebba49ec1c69847f166cd1bd6cbfdd98ce0b5b7988609",
+    "vendorSourcePatched": false
+  },
+  "limits": {
+    "glbFormatBytes": 4294967295,
+    "modelChunkBytes": 8388608,
+    "nativeMessageEnvelopeBytes": 482344960,
+    "projectUploadUsesExistingEnvelope": true
+  }
+}

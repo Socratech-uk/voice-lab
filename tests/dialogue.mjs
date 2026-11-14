@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import {DIALOGUE_DEFAULTS as defaults,dialogueRequest,dialogueSettings,dialogueProfile,readDialogueProfile,dialogueBase64,inspectDialogueWav,DialogueStudio} from '../src/dialogue.mjs';
+function wav(seconds=6){const b=new ArrayBuffer(44+seconds*48000),v=new DataView(b),tag=(p,s)=>{for(let i=0;i<s.length;i++)v.setUint8(p+i,s.charCodeAt(i));};tag(0,'RIFF');v.setUint32(4,b.byteLength-8,true);tag(8,'WAVE');tag(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,24000,true);v.setUint32(28,48000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);tag(36,'data');v.setUint32(40,b.byteLength-44,true);return dialogueBase64(new Uint8Array(b));}
+const audio=wav(),ref={audioWav:audio,text:'Reference text',name:'voice'};
+const longLine='Long character dialogue. '.repeat(1000);
+assert.equal(dialogueRequest(defaults,longLine,ref).text,longLine.trim());
+assert.equal(inspectDialogueWav(wav(121)).duration,121);
+assert.equal(inspectDialogueWav(audio,true).duration,6);assert.throws(()=>inspectDialogueWav(wav(5),true),/6–30/);assert.throws(()=>inspectDialogueWav(audio.slice(0,-40)),/WAV/);
+let r=dialogueRequest(defaults,'line',ref);assert(!r.referenceWav);assert(r.instruct);assert(!r.cfgWeight);
+r=dialogueRequest({...defaults,model:'qwen-clone'},'line',ref);assert.equal(r.referenceText,'Reference text');assert(!('instruct' in r));assert.throws(()=>dialogueRequest({...defaults,model:'qwen-clone'},'line',null),/reference/);
+r=dialogueRequest({...defaults,model:'chatterbox-turbo'},'line',ref);assert(!('cfgWeight' in r));assert(!('exaggeration' in r));assert(!('speaker' in r));assert(!('instruct' in r));
+assert.equal(dialogueRequest({...defaults,model:'chatterbox'},'line',null).exaggeration,.5);
+assert.equal(dialogueSettings({seed:NaN,takes:999,model:'fish'}).model,'qwen-design');
+const p=readDialogueProfile(JSON.stringify(dialogueProfile({...defaults,model:'qwen-clone'},ref)));assert.equal(p.reference.audioWav,audio);assert.equal(p.reference.text,ref.text);assert.equal(p.settings.model,'qwen-clone');assert.throws(()=>readDialogueProfile('{"protocol":"evil"}'),/profile/);
+const calls=[];let pending=null;const client={status:async()=>({state:{loaded:true}}),render:async o=>{calls.push(o);if(pending)return new Promise(resolve=>pending.resolve=()=>resolve({ok:true,model:o.model,seed:o.seed,audioWav:audio}));return {ok:true,model:o.model,seed:o.seed,audioWav:audio};},cancel:async()=>{},dispose:()=>{}};
+const lab=new DialogueStudio({dialogueClient:()=>client});lab.settings={...defaults,takes:3};await lab.generate('line');assert.equal(lab.takes.length,3);assert.deepEqual(lab.takes.map(t=>t.seed),[42,43,44]);
+pending={};const active=lab.generate('late');await lab.cancel();assert(lab.busy);await assert.rejects(lab.generate('overlap'),/already/);pending.resolve();await active;assert.equal(lab.takes.length,3);assert(!lab.busy);
+lab.reference=ref;lab.settings={...defaults,model:'qwen-clone'};pending=null;await lab.generate('clone line');assert.equal(calls.at(-1).referenceText,ref.text);assert(!calls.at(-1).instruct);lab.dispose();
+console.log('PASS dialogue lab: provider-specific requests, bounded WAV/profile validation, round-trip reference, sequential seeds, cancellation lease and completed take retention');
+const failedSave=new DialogueStudio({dialogueClient:()=>client});failedSave.settings={...defaults,takes:3};failedSave.onTake=async()=>{throw Error('Device storage is full.');};const beforeSaveCalls=calls.length;await failedSave.generate('Keep this recording');assert.equal(failedSave.takes.length,1);assert.equal(failedSave.takes[0].audioWav,audio);assert.equal(calls.length,beforeSaveCalls+1);assert(failedSave.error.includes('storage is full'));failedSave.dispose();
+console.log('PASS failed take persistence stops the batch and retains the completed WAV for download/retry');

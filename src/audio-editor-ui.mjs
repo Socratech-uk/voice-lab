@@ -1,0 +1,77 @@
+import {pcmWav,pcmEdit} from './audio-edit.mjs';
+// The modal and API share PCM operations. Only Save creates a new immutable recording.
+let audioTimeline=null;
+const timelinePlayer=new Audio();timelinePlayer.preload='metadata';
+function audioTimelineDirty(){return !!audioTimeline&&(audioTimeline.edits.length>0||audioTimeline.metadataDirty);}
+function timelineClock(v){return `${Math.floor(v/60)}:${(v%60).toFixed(2).padStart(5,'0')}`;}
+function timelineMetadata(){const e=audioTimeline;return {...e.row,title:$('timeline-title').value,category:$('timeline-category').value,tags:$('timeline-tags').value.split(',').map(s=>s.trim()).filter(Boolean),notes:$('timeline-notes').value};}
+async function openAudioTimeline(id){
+  if(audioWorkshop.busy||audioLibraryBusy)return;
+  if(audioTimelineDirty()&&!await confirmLibrary('Discard editor changes?','Save a new version or download the edited WAV to keep them.','Discard changes'))return;
+  const row=await audioAssets.get(id);if(row?.state!=='ready')throw Error('This asset has no recording yet.');
+  const bytes=new Uint8Array(await (await audioAssets.blob(id)).arrayBuffer());
+  if(audioTimeline?.url)URL.revokeObjectURL(audioTimeline.url);timelinePlayer.pause();
+  audioTimeline={row,original:bytes,bytes,edits:[],redo:[],metadataDirty:false,cursor:0,start:0,end:pcmWav(bytes).durationSeconds,url:null,busy:false,playEnd:null};
+  for(const [key,value] of Object.entries({title:row.title,category:row.category,tags:row.tags.join(', '),notes:row.notes,prompt:row.recipe?.prompt||'',device:row.recipe?.device||$('audio-device').value,seed:((row.recipe?.seed||0)+1)%2147483648}))$('timeline-'+key).value=value;
+  $('timeline-model').replaceChildren();for(const [key,m] of Object.entries(AUDIO_MODEL_OPTIONS))if(m.kinds.includes(row.kind)){const o=document.createElement('option');o.value=key;o.textContent=m.label+` · ${m.max} s`;$('timeline-model').append(o);}
+  $('timeline-model').value=row.recipe?.model||AUDIO_MODELS[row.kind];$('timeline-terms').checked=$('audio-terms').checked;$('timeline-zoom').value='1';$('timeline-scroll').value='0';$('timeline-speed').value='1';timelinePlayer.playbackRate=1;
+  const parent=row.lineage?await audioAssets.get(row.lineage.source.id):null;
+  $('timeline-origin').textContent=[({generation:'Generated recording',import:'Imported recording',edit:'Edited recording',extension:'Continued recording'})[row.origin||'generation'],parent?'From '+parent.title:'',`version ${row.revision}`].filter(Boolean).join(' · ');
+  $('timeline-error').hidden=true;$('timeline-status').textContent='';if(!$('audio-timeline').open)$('audio-timeline').showModal();
+  $('audio-latest-player').pause();for(const v of audioViews.values())v.audio?.pause();timelineSetAudio();$('audio-timeline').scrollTop=0;
+}
+function timelineSetAudio(){const e=audioTimeline;if(!e)return;timelinePlayer.pause();if(e.url)URL.revokeObjectURL(e.url);e.url=URL.createObjectURL(new Blob([e.bytes],{type:'audio/wav'}));timelinePlayer.src=e.url;e.info=pcmWav(e.bytes);e.cursor=Math.min(e.cursor,e.info.durationSeconds);e.start=Math.min(e.start,e.info.durationSeconds);e.end=Math.min(e.end,e.info.durationSeconds);e.playEnd=null;timelineRender();}
+function timelineRender(){const e=audioTimeline;if(!e)return;const busy=e.busy||audioWorkshop.busy;
+  for(const el of $('audio-timeline').querySelectorAll('button,input,select,textarea'))el.disabled=busy;
+  $('timeline-stop').disabled=!audioWorkshop.busy;$('timeline-undo').disabled=busy||!e.edits.length;$('timeline-redo').disabled=busy||!e.redo.length;
+  $('timeline-prepare').title=$('timeline-terms').checked?'Download missing files and load the selected continuation model.':'Accept the model terms before downloading and loading this model.';$('timeline-prepare').disabled=busy||!$('timeline-terms').checked;$('timeline-extend').disabled=busy||audioTimelineDirty()||!!audioWorkshop.unsaved||e.cursor<.1;
+  for(const [key,value] of Object.entries({start:e.start,end:e.end,cursor:e.cursor})){const field=$('timeline-'+key);if(document.activeElement!==field)field.value=value.toFixed(3);}
+  for(const key of ['start','end','cursor'])$('timeline-'+key).max=e.info.durationSeconds;
+  $('timeline-time').textContent=timelineClock(e.cursor)+' / '+timelineClock(e.info.durationSeconds);$('timeline-play').textContent=timelinePlayer.paused?'Play':'Pause';$('timeline-play').title=timelinePlayer.paused?'Play the edited recording from the playhead.':'Pause playback at the current position.';
+  $('timeline-extend').title=busy?'Wait for the active job, or use Stop.':audioTimelineDirty()?'Save a new version before continuing from your edits.':audioWorkshop.unsaved?'Save or download the retained recording before continuing.':e.cursor<.1?'Move the playhead at least 0.1 seconds into the recording.':e.cursor>=e.info.durationSeconds?'Generate more audio after the end and save a separate recording.':'Keep audio before the playhead and replace the rest with a generated ending in a separate recording.';
+  $('timeline-add').max=(AUDIO_MODEL_OPTIONS[$('timeline-model').value]?.max||120)-Math.min(30,e.cursor);
+  timelineDraw();
+}
+function timelineWindow(){const e=audioTimeline,span=e.info.durationSeconds/Number($('timeline-zoom').value);return {span,start:(e.info.durationSeconds-span)*Number($('timeline-scroll').value)};}
+function timelineDraw(){const e=audioTimeline;if(!e?.info)return;const canvas=$('timeline-wave'),box=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1,width=Math.max(1,Math.floor(box.width)),height=180;
+  if(canvas.width!==Math.round(width*dpr)||canvas.height!==height*dpr){canvas.width=Math.round(width*dpr);canvas.height=height*dpr;}
+  const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);ctx.fillStyle='#101a20';ctx.fillRect(0,0,width,height);
+  const {span,start}=timelineWindow(),x=t=>(t-start)/span*width;ctx.fillStyle='#c5a86736';ctx.fillRect(x(e.start),0,x(e.end)-x(e.start),height-20);
+  const v=new DataView(e.bytes.buffer,e.bytes.byteOffset+e.info.offset,e.info.size);ctx.strokeStyle='#8fb8ac';ctx.lineWidth=1;ctx.beginPath();
+  for(let p=0;p<width;p++){const lo=Math.floor((start+span*p/width)*44100),hi=Math.min(e.info.frames,Math.ceil((start+span*(p+1)/width)*44100));let peak=0;const stride=Math.max(1,Math.floor((hi-lo)/160));for(let f=lo;f<hi;f+=stride)for(let c=0;c<e.info.channels;c++)peak=Math.max(peak,Math.abs(v.getInt16((f*e.info.channels+c)*2,true))/32768);ctx.moveTo(p,80-peak*70);ctx.lineTo(p,80+peak*70);}ctx.stroke();
+  ctx.fillStyle='#a5b1b8';ctx.font='11px sans-serif';for(let i=0;i<=4;i++){const px=width*i/4;ctx.fillText(timelineClock(start+span*i/4),Math.max(0,Math.min(width-60,px)),176);}
+  ctx.strokeStyle='#efd594';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x(e.cursor),0);ctx.lineTo(x(e.cursor),160);ctx.stroke();canvas.setAttribute('aria-valuemax',e.info.durationSeconds);canvas.setAttribute('aria-valuenow',e.cursor);canvas.setAttribute('aria-valuetext',timelineClock(e.cursor));
+}
+async function timelineAction(fn){const e=audioTimeline;if(!e||e.busy||audioWorkshop.busy)return;e.busy=true;timelinePlayer.pause();$('timeline-error').hidden=true;timelineRender();try{await fn();}catch(err){$('timeline-status').textContent='Could not complete this action.';$('timeline-error').textContent=err.message==='local_ai_app_request_invalid'?'The installed audio bridge rejected this request. Rebuild cApp, then freshly Compile and Package Voice Lab with Local AI 0.15.1 or later. Your original recording is still saved.':err.message||String(err);$('timeline-error').hidden=false;}finally{if(audioTimeline)audioTimeline.busy=false;timelineRender();}}
+function timelineSeek(t){const e=audioTimeline;if(!e)return;e.cursor=Math.max(0,Math.min(e.info.durationSeconds,t));e.playEnd=null;timelinePlayer.currentTime=e.cursor;timelineRender();}
+async function timelineClose(){if(audioTimeline?.busy||audioWorkshop.busy)return;if(audioTimelineDirty()&&!await confirmLibrary('Discard editor changes?','Save a new version or download the edited WAV to keep them.','Discard changes'))return;timelinePlayer.pause();if(audioTimeline?.url)URL.revokeObjectURL(audioTimeline.url);audioTimeline=null;timelinePlayer.removeAttribute('src');timelinePlayer.load();$('audio-timeline').close();}
+$('timeline-close').addEventListener('click',()=>void timelineClose());$('audio-timeline').addEventListener('cancel',e=>{e.preventDefault();void timelineClose();});
+$('timeline-play').addEventListener('click',()=>{if(!audioTimeline)return;if(!timelinePlayer.paused){timelinePlayer.pause();timelineRender();return;}audioTimeline.playEnd=null;if(audioTimeline.cursor>=audioTimeline.info.durationSeconds)timelineSeek(0);timelinePlayer.currentTime=audioTimeline.cursor;void timelinePlayer.play().then(timelineRender).catch(err=>{$('timeline-error').textContent=err.message;$('timeline-error').hidden=false;});});
+$('timeline-play-selection').addEventListener('click',()=>{const e=audioTimeline;if(e.end<=e.start)return;timelinePlayer.currentTime=e.start;e.playEnd=e.end;void timelinePlayer.play().then(timelineRender).catch(audioFail);});
+timelinePlayer.addEventListener('timeupdate',()=>{const e=audioTimeline;if(!e)return;e.cursor=timelinePlayer.currentTime;if(e.playEnd!==null&&e.cursor>=e.playEnd){timelinePlayer.pause();e.cursor=e.playEnd;timelinePlayer.currentTime=e.cursor;e.playEnd=null;}timelineRender();});
+for(const name of ['ended','pause','play'])timelinePlayer.addEventListener(name,timelineRender);
+$('timeline-speed').addEventListener('change',()=>{timelinePlayer.playbackRate=Number($('timeline-speed').value);});
+for(const key of ['zoom','scroll'])$('timeline-'+key).addEventListener('input',timelineDraw);
+for(const key of ['start','end'])$('timeline-'+key).addEventListener('change',()=>{const e=audioTimeline,n=Number($('timeline-'+key).value);if(Number.isFinite(n)){e[key]=Math.max(0,Math.min(e.info.durationSeconds,n));if(e.start>e.end)[e.start,e.end]=[e.end,e.start];}timelineRender();});
+$('timeline-cursor').addEventListener('change',()=>{const n=Number($('timeline-cursor').value);if(Number.isFinite(n))timelineSeek(n);});
+$('timeline-jump-end').addEventListener('click',()=>timelineSeek(audioTimeline.info.durationSeconds));
+$('timeline-select-all').addEventListener('click',()=>{audioTimeline.start=0;audioTimeline.end=audioTimeline.info.durationSeconds;timelineRender();});
+let timelinePointer=null;const timelineAt=event=>{const box=$('timeline-wave').getBoundingClientRect(),w=timelineWindow();return Math.max(0,Math.min(audioTimeline.info.durationSeconds,w.start+Math.max(0,Math.min(1,(event.clientX-box.left)/box.width))*w.span));};
+$('timeline-wave').addEventListener('pointerdown',e=>{if(!audioTimeline||audioTimeline.busy||audioWorkshop.busy)return;timelinePointer={at:timelineAt(e),x:e.clientX};e.currentTarget.setPointerCapture(e.pointerId);timelineSeek(timelinePointer.at);});
+$('timeline-wave').addEventListener('pointermove',e=>{if(!timelinePointer)return;if(Math.abs(e.clientX-timelinePointer.x)>3){const at=timelineAt(e);audioTimeline.start=Math.min(at,timelinePointer.at);audioTimeline.end=Math.max(at,timelinePointer.at);timelineDraw();}});
+$('timeline-wave').addEventListener('pointerup',()=>{timelinePointer=null;timelineRender();});$('timeline-wave').addEventListener('pointercancel',()=>{timelinePointer=null;});
+$('timeline-wave').addEventListener('keydown',e=>{const state=audioTimeline;if(!state)return;let t=state.cursor;if(e.key==='ArrowRight')t+=e.shiftKey?1:.1;else if(e.key==='ArrowLeft')t-=e.shiftKey?1:.1;else if(e.key==='Home')t=0;else if(e.key==='End')t=state.info.durationSeconds;else return;e.preventDefault();if(e.shiftKey){state.start=Math.min(state.cursor,Math.max(0,t));state.end=Math.max(state.cursor,Math.min(state.info.durationSeconds,t));}timelineSeek(t);});
+if(typeof ResizeObserver==='function')new ResizeObserver(timelineDraw).observe($('timeline-wave'));else window.addEventListener('resize',timelineDraw);
+for(const b of document.querySelectorAll('[data-audio-edit]'))b.addEventListener('click',()=>void timelineAction(async()=>{const e=audioTimeline;if(e.edits.length>=100)throw Error('Save this version before making more edits.');const edit={operation:b.dataset.audioEdit,startSeconds:e.start,endSeconds:e.end};e.bytes=pcmEdit(e.bytes,edit);e.edits.push(edit);e.redo=[];e.cursor=0;e.start=0;e.end=pcmWav(e.bytes).durationSeconds;timelineSetAudio();$('timeline-status').textContent='Edited locally · save a new version to keep it.';}));
+function timelineReplay(){const e=audioTimeline;e.bytes=e.original;for(const edit of e.edits)e.bytes=pcmEdit(e.bytes,edit);e.cursor=0;e.start=0;e.end=pcmWav(e.bytes).durationSeconds;timelineSetAudio();}
+$('timeline-undo').addEventListener('click',()=>void timelineAction(async()=>{const e=audioTimeline;if(e.edits.length)e.redo.push(e.edits.pop());timelineReplay();}));
+$('timeline-redo').addEventListener('click',()=>void timelineAction(async()=>{const e=audioTimeline;if(e.redo.length)e.edits.push(e.redo.pop());timelineReplay();}));
+for(const key of ['title','category','tags','notes'])$('timeline-'+key).addEventListener('input',()=>{audioTimeline.metadataDirty=true;$('timeline-extend').disabled=true;$('timeline-extend').title='Save a new version before continuing from your edits.';});
+$('timeline-save').addEventListener('click',()=>void timelineAction(async()=>{const e=audioTimeline,row=await audioAssets.saveMedia({metadata:timelineMetadata(),bytes:e.bytes,source:{id:e.row.id,revision:e.row.revision},operations:e.edits});e.row=row;e.original=e.bytes;e.edits=[];e.redo=[];e.metadataDirty=false;$('timeline-status').textContent='Saved a new version. Original retained.';$('timeline-origin').textContent='Saved version · original retained';await refreshAudioAssets();}));
+$('timeline-download').addEventListener('click',()=>downloadDialogue(new Blob([audioTimeline.bytes],{type:'audio/wav'}),dialogueFilename($('timeline-title').value)+'.wav'));
+for(const key of ['model','terms'])$('timeline-'+key).addEventListener('change',timelineRender);
+$('timeline-prepare').addEventListener('click',()=>void timelineAction(async()=>{await audioWorkshop.prepare({model:$('timeline-model').value,device:$('timeline-device').value},$('timeline-terms').checked);$('timeline-status').textContent=audioWorkshop.message;}));
+$('timeline-stop').addEventListener('click',()=>void audioWorkshop.cancel().catch(audioFail));
+$('timeline-extend').addEventListener('click',()=>void timelineAction(async()=>{if(audioTimelineDirty())throw Error('Save edits before continuing.');const e=audioTimeline,row=await audioWorkshop.extend({id:e.row.id,revision:e.row.revision,atSeconds:e.cursor,addedSeconds:Number($('timeline-add').value),model:$('timeline-model').value,device:$('timeline-device').value,prompt:$('timeline-prompt').value,seed:Number($('timeline-seed').value)});await refreshAudioAssets();e.busy=false;await openAudioTimeline(row.id);$('timeline-status').textContent='Continuation saved. Original retained.';}));
+const previousAudioNotify=audioWorkshop.onChange;audioWorkshop.onChange=()=>{previousAudioNotify();if(audioTimeline){if(audioWorkshop.busy)$('timeline-status').textContent=audioWorkshop.message+(audioWorkshop.progress?.steps?' · '+audioWorkshop.progress.step+'/'+audioWorkshop.progress.steps:'');timelineRender();}};
+window.addEventListener('pagehide',()=>{timelinePlayer.pause();if(audioTimeline?.url)URL.revokeObjectURL(audioTimeline.url);audioTimeline=null;},{once:true});

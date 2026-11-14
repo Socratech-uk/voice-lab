@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Voice Lab audio draft batch v1",
+  "type": "object",
+  "required": [
+    "protocol",
+    "items"
+  ],
+  "properties": {
+    "protocol": {
+      "const": "capp.voice-lab.audio-batch.v1"
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "prompt",
+          "durationSeconds",
+          "seed"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "kind": {
+            "enum": [
+              "sfx",
+              "music"
+            ]
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "durationSeconds": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 380
+          },
+          "seed": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "category": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "subject": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "tags": {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 12000
+          },
+          "model": {
+            "enum": [
+              "sa3-sfx",
+              "sa3-music",
+              "sa3-medium"
+            ]
+          },
+          "device": {
+            "enum": [
+              "cpu",
+              "gpu"
+            ]
+          },
+          "steps": {
+            "const": 8
+          },
+          "assetType": {
+            "enum": [
+              "sfx",
+              "music",
+              "ambience",
+              "dialogue",
+              "reference"
+            ],
+            "description": "Optional library classification; generation kind and model stay independent."
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "model": {
+                  "const": "sa3-medium"
+                }
+              },
+              "required": [
+                "model"
+              ]
+            },
+            "else": {
+              "properties": {
+                "durationSeconds": {
+                  "maximum": 120
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "model": {
+                  "const": "sa3-music"
+                }
+              },
+              "required": [
+                "model"
+              ]
+            },
+            "then": {
+              "properties": {
+                "kind": {
+                  "const": "music"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "model": {
+                  "const": "sa3-sfx"
+                }
+              },
+              "required": [
+                "model"
+              ]
+            },
+            "then": {
+              "properties": {
+                "kind": {
+                  "const": "sfx"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

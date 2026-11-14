@@ -1,0 +1,53 @@
+{
+  "checks": [
+    "Voice Lab loads old browser copies and rejects new browser-only saves",
+    "Connect & migrate writes real WAVs, transcripts and folder metadata",
+    "new recording, folder creation and metadata rename save to disk through the actual UI",
+    "reload remembers the service and an empty browser restores audio from disk",
+    "Foundry connects 3D/audio roles and browses their disk folders",
+    "Foundry copies pinned audio/model revisions with source identity and original bytes",
+    "joining model, child and sound then publishing creates a self-contained Kestrel manifest",
+    "later draft edits do not change a published project and stale selections are refused",
+    "browser Voice Lab handoff connects storage before copying a Foundry revision",
+    "native project staging retains a disk copy even when the native transfer fails",
+    "connected Action Lab import preserves rig recipe and supports skeletal publication",
+    "Foundry remembers both connections in its host configuration",
+    "no uncaught browser errors"
+  ],
+  "passed": 13,
+  "nativeRun": false,
+  "date": "2026-10-17",
+  "versions": {
+    "3dLab": "0.16.1",
+    "voiceLab": "1.10.0",
+    "foundry": "0.3.0",
+    "kestrelRuntime": "0.36"
+  },
+  "sourceTests": {
+    "labRegressionPassLines": 265,
+    "labStorage": 17,
+    "labAtomicPython": 5,
+    "labRealBrowser": 8,
+    "voiceDiskJS": 16,
+    "voiceStoragePython": 9,
+    "voiceExistingUnitGroups": 8,
+    "foundryJS": 7,
+    "foundryPython": 37,
+    "kestrelConnectorPython": 37
+  },
+  "bundles": {
+    "3dLab": "cef6ca68d8ef39aed70eb2470a6dd473bf24a1322470b76042fcbc32045044c4",
+    "voiceLab": "d77275af7351135ae0ef1a0f375edc5e2c6631b18978394dd8aa581721d6d528",
+    "foundry": "153d5f795e83956ae58cfc4e4bc2532736892b6d54a0971ebee27574c1588b9a"
+  },
+  "nativeBuildRun": false,
+  "windowsTested": false,
+  "gpuInferenceTested": false,
+  "cloudflareDeployed": false,
+  "notes": [
+    "Synthetic browser and filesystem fixtures; user PC assets not accessed.",
+    "All 37 backend checks include a real browser-exported 21-joint rig with retained movement settings.",
+    "No C++ runtime files changed; Kestrel authoring Python and bundled web tools updated.",
+    "Both hosts contain identical rebuilt Labs and Foundry interfaces."
+  ]
+}

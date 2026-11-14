@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-15",
+  "releases": {
+    "foundry": "0.1.0",
+    "threeLab": "0.14.0",
+    "voiceLab": "1.9.0",
+    "kestrel": "0.36.0"
+  },
+  "freshInputs": {
+    "kestrel": {
+      "filename": "kestrel-source-20261015-202847-638.zip",
+      "sha256": "17470fe0b8c8e788a0b6120e11241164720efac777c42a18b70f35650f982fe9"
+    },
+    "capp": {
+      "filename": "capp-v1(20261015-213008).zip",
+      "sha256": "dac3fdccd98e7a89b017d9bb670638cb48722d61820c1148f5846301a460b4ed"
+    },
+    "voice": {
+      "filename": "voice-lab(20261015-203055).zip",
+      "sha256": "c5f3d4f0fec14f9283da6f6ea96ebe0764a814a6bd405f497e90e8890f059568"
+    },
+    "lab": {
+      "filename": "3d-lab(8).zip",
+      "sha256": "d2eb8f155a2674eb40002051e9cb5bd69e326a0057b3bb81be8ebc23f1f2fb28"
+    }
+  },
+  "priorSourceMerged": false,
+  "agentsDelegated": false,
+  "python": {
+    "passed": 31,
+    "skipped": 0,
+    "suites": [
+      "test_workspace",
+      "test_skeletal",
+      "test_foundry"
+    ],
+    "realBrowserGLBBridge": true
+  },
+  "node": {
+    "foundryCorePassed": 6,
+    "voiceConnectionPassed": 10,
+    "projectRevisionAndConnectionSuitePassed": true
+  },
+  "browser": {
+    "foundry": {
+      "success": true,
+      "checks": [
+        "opens the project and loads the actual weighted GLB",
+        "details and assembly save together in one revision",
+        "assembly undo and redo restore visible scene edits",
+        "surface cursor tracks the real mesh and places a socket",
+        "multiple sound event drafts survive switching and save atomically",
+        "sound removal stays a draft and retains other edits",
+        "check is read-only and reviewed publication creates runtime bindings",
+        "movement preview and keyboard controls work on the loaded rig",
+        "screenshot downloads a real PNG and fullscreen exits",
+        "3D Lab receives the exact project model in Action Lab",
+        "Voice Lab opens with the project and chosen recording",
+        "narrow workspace has no horizontal overflow",
+        "same-ID project folders remain isolated when switched"
+      ],
+      "errors": [],
+      "nativeVerified": false
+    },
+    "actionLab": {
+      "checks": [
+        "action playback and stride settings save without changing pose keys",
+        "visible contact bands seek the playhead and survive Undo/Redo",
+        "contact suggestions remain proposals until explicitly applied",
+        "events appear on the timeline and invalid contact edits are transactional",
+        "reverse transforms marker times with keys and Undo restores them",
+        "transfer requires mapping review, appends a new action and preserves the target",
+        "sandbox exposes stance/air slots, calibrated speed and live event crossings",
+        "real GLB carries consistent rig, weights, original actions and game settings",
+        "preparation UI and timeline fit a narrow viewport",
+        "save and reopen preserve contacts, events, movement and original keys"
+      ],
+      "errors": [],
+      "builtIndexSha256": "f967c930d51aa4f07e86218470a8dd4d521f561903627f98a6a13995b438328f",
+      "inferenceVerified": false,
+      "nativeVerified": false,
+      "success": true
+    }
+  },
+  "standaloneCliMigrationPassed": true,
+  "sharedSourceAndBundledEditorParityPassed": true,
+  "cappDocs": {
+    "before": 19,
+    "after": 19,
+    "sameIssues": true,
+    "newIssues": 0,
+    "scope": "internal records only; no runtime/public/component/AI changes"
+  },
+  "builtHtmlSha256": {
+    "foundry": "62079d50f58da74d4c907dfc2dbf4a788c235bd339ccfc1d9a12e0d23b282c0d",
+    "lab": "f967c930d51aa4f07e86218470a8dd4d521f561903627f98a6a13995b438328f",
+    "voice": "243b30cf150e865999f2fc25baefce42be58cc0f7690dd6bd649cafa2a416e10"
+  },
+  "native": {
+    "compiled": false,
+    "ctest": false,
+    "gameplay": false,
+    "visualPerformance": false,
+    "installedWindows": false,
+    "reason": "Supplied standing skip-final-native-validation instruction."
+  },
+  "boundaries": [
+    "Source-only Kestrel overlay needs the full local project assets/dependencies.",
+    "Attachments are visual, with static children and weighted base-joint sockets; gameplay collision/equipment remain owned by Kestrel.",
+    "Only documented gameplay hooks and action markers trigger sounds; world-wide ambient/dialogue authoring is not automatic.",
+    "Foundry is an independent Python/browser app without an AI engine; native tab docking remains deferred."
+  ]
+}

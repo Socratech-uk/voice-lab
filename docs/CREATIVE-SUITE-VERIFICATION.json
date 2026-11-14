@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-18",
+  "versions": {
+    "3d-lab": "0.21.0",
+    "foundry": "0.6.0",
+    "voice-lab": "1.11.0 (tooling only)",
+    "kestrel": "0.36.1 (tooling only)"
+  },
+  "inputs": {
+    "3d-lab": {
+      "archive": "3d-lab(20261018-172609).zip",
+      "bytes": 1774608,
+      "sha256": "65273d7f2b763ed5befe0de583ed121becfd0a86b933e582837eb2e50eacaf84"
+    },
+    "foundry": {
+      "archive": "foundry(5).zip",
+      "bytes": 1697221,
+      "sha256": "524f201e00ccfdc9ce3cd45a7a755912390ced6e6ab1a02d97a26ed787a31125"
+    },
+    "kestrel": {
+      "archive": "kestrel(20261018-175108).zip",
+      "bytes": 367433234,
+      "sha256": "717b7d47e03f4fcd5a4508e7f1b125438792ce5b0c6dd3e438ea824feaae8ed9"
+    },
+    "voice-lab": {
+      "archive": "voice-lab(20261018-175143).zip",
+      "bytes": 368912,
+      "sha256": "843d34d6e22811382ed5e27c1d2016c8721cfbfcd757efcc742f711d783c38cd"
+    }
+  },
+  "lab": {
+    "fullNodePassLines": 329,
+    "durableStorageNode": 17,
+    "storagePython": 5,
+    "durableRevisionChecks": 5,
+    "browser": {
+      "ok": true,
+      "checks": [
+        "Builder saves revisions on the same asset and preserves the original saved bytes",
+        "Action save adds the rig without making another asset card",
+        "rename versus duplicate is explicit and ZIP selection/notes survive saving",
+        "a fresh profile finds one current card per identity and reopens the edited rig"
+      ],
+      "errors": [],
+      "nativeWindows": false
+    }
+  },
+  "foundry": {
+    "nodeCoreEquipmentScenes": "passed",
+    "pythonTests": 48,
+    "pythonSkipped": 1,
+    "skipReason": "Existing optional actual Action Lab export fixture requires ACTION_LAB_GLB and ACTION_LAB_RECIPE.",
+    "exporterTests": 6,
+    "browser": {
+      "ok": true,
+      "checks": [
+        "scene builder places a pinned animated NPC and retains editable transforms",
+        "timed dialogue plays with subtitles and action markers trigger separate cue audio",
+        "scene save uses the real Files worker and a fresh browser profile reopens model/audio bindings",
+        "Foundry work allowlist and existing action-sound attachment save independently",
+        "stale scene saves fail without overwriting another editor",
+        "scene workspace remains usable on a phone"
+      ],
+      "errors": [],
+      "nativeWindows": false,
+      "gameplay": false
+    },
+    "selectiveFixtureExport": "6d52782684845d7525fe8f36f0f80101641e1cb860861db1e54bfc6e80d0164e"
+  },
+  "kestrel": {
+    "cookPreservesCreativeSuiteDocument": true
+  },
+  "notRun": [
+    "native compilation/build",
+    "CTest",
+    "installed Windows wrappers/app acceptance",
+    "CUDA/model inference",
+    "gameplay",
+    "performance"
+  ],
+  "scope": [
+    "source-only changed-files update",
+    "existing Files API and model-store transactions",
+    "disposable fixtures; no user media migrated or cleaned",
+    "no native scene consumer added",
+    "no cApp owner/runtime/pin changes"
+  ]
+}

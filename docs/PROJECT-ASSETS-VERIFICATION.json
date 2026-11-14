@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-15",
+  "versions": {
+    "3dLab": "0.11.0",
+    "voiceLab": "1.8.0",
+    "kestrel": "0.34.0"
+  },
+  "sourceInputs": {
+    "3d-lab(8).zip": "fe664b77d2110c0f99c4eb9ae9b19141ab38f19c1e19652ccf9ad45f5ae04995",
+    "voice-lab(20261015-163002).zip": "71fe0e5c302b583cef4d95b240db4d961a00d170c035d97574ec5b64b380b2b7",
+    "kestrel-source-20261015-151559-628(1).zip": "55bde16603f504b631254c21c9af13fb25451ae7432fe42fd547500a83830d7b"
+  },
+  "browser": {
+    "checks": [
+      "3D Lab pairs with the real loopback connector",
+      "Voice Lab reads the same stable project ID",
+      "Converted Kestrel mesh opens through real GLB parsing and saves to IndexedDB",
+      "Reopening the same immutable project revision reuses its local draft",
+      "Personal draft copied as a new project revision without overwriting the original",
+      "Assignment changes synchronize into the other lab automatically",
+      "Sound event assignment synchronizes from Voice Lab into 3D Lab",
+      "Project WAV copies through Voice Lab decoding into its personal library",
+      "Explicit publication creates model bindings and a sound lookup entry",
+      "Published manifest resolves legacy and stable IDs without changing gameplay metadata",
+      "Project workspace fits a narrow viewport",
+      "Existing Action Lab still opens with its rigging tools",
+      "3D asset context menu copies a saved revision into the connected project",
+      "Voice asset context menu copies a recording without deadlocking its manager",
+      "Hub opens its included 3D Lab already paired without a cross-origin network permission",
+      "Both built apps complete without uncaught JavaScript errors"
+    ],
+    "errors": [],
+    "builtInputs": {
+      "threeLab": "01d2170863de3e7292bae9d936931bdfea07a14c2c94f9dea9a79d7db8a0fcd7",
+      "voiceLab": "92b50d88f8ba05356e04595caa388338e0f559b05dbad9733ca1688ebcd918e0"
+    },
+    "scope": "Real Chromium, both rebuilt HTML apps, IndexedDB, live Python connector and synthetic cooked mesh/WAV. No native game or AI inference."
+  },
+  "checks": {
+    "projectConnectorPython": 13,
+    "threeLabExistingSuites": 18,
+    "threeLabNewProjectRevisionChecks": "passed",
+    "voiceCore": 50,
+    "voiceConnection": 10,
+    "voiceProjectTransfer": "passed",
+    "voiceAssetManager": "passed",
+    "cookPreservationHelper": "synthetic files passed; full cooker not run",
+    "sourceMetadata": {
+      "entries": 116,
+      "metadataPresent": 116,
+      "missingMetadata": [],
+      "formatIssues": [],
+      "largeAssemblies": 7,
+      "maxParts": 1424
+    }
+  },
+  "limitations": [
+    "No Kestrel native compilation, CTest, gameplay, visual or performance run, per supplied standing instruction.",
+    "No Windows WebView2/native-package or GPU inference acceptance.",
+    "All original mesh binaries, saved SOL documents and WAVs were omitted from the supplied source share.",
+    "Browser verification used real HTTP, GLB/WAV parsing and IndexedDB with synthetic mesh/audio. Cross-origin test permission was explicitly granted; same-origin hub tested without it.",
+    "Skeletal playback, movement runtime adapter and sound triggers remain unimplemented; assignments and lookup data are retained."
+  ]
+}

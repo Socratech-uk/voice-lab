@@ -1,0 +1,60 @@
+/** Real Chromium/IndexedDB/WebAudio + actual cApp client, controlled native replies. */
+import fs from 'node:fs/promises';import http from 'node:http';import assert from 'node:assert/strict';import {createRequire} from 'node:module';import path from 'node:path';
+const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
+const capp=process.argv[2],output=process.argv[3];assert(capp&&output,'pass cApp root and output directory');await fs.mkdir(output,{recursive:true});
+const html=await fs.readFile(new URL('../index.html',import.meta.url),'utf8'),owner=await fs.readFile(path.join(capp,'sidecars/local-ai/runtime/local-dialogue.js'),'utf8'),models=JSON.parse(await fs.readFile(path.join(capp,'sidecars/local-ai/native/dialogue-models.json'),'utf8')).models;
+const wav=Buffer.alloc(44+6*48000);wav.write('RIFF');wav.writeUInt32LE(wav.length-8,4);wav.write('WAVE',8);wav.write('fmt ',12);wav.writeUInt32LE(16,16);wav.writeUInt16LE(1,20);wav.writeUInt16LE(1,22);wav.writeUInt32LE(24000,24);wav.writeUInt32LE(48000,28);wav.writeUInt16LE(2,32);wav.writeUInt16LE(16,34);wav.write('data',36);wav.writeUInt32LE(wav.length-44,40);
+const server=http.createServer((req,res)=>{res.writeHead(200,{'Content-Type':'text/html'});res.end(html);});await new Promise(r=>server.listen(0,'127.0.0.1',r));const url=`http://127.0.0.1:${server.address().port}`;
+const browser=await chromium.launch({headless:true,args:['--no-sandbox']}),context=await browser.newContext({viewport:{width:1440,height:1080},acceptDownloads:true});
+const errors=[],checks=[],check=(name,ok)=>{assert(ok,name);checks.push(name);console.log('PASS',name);};
+await context.addInitScript(({owner,models,audio})=>{
+ window.__CAPP_PACKAGED_RUNTIME__=true;window.__CAPP_EXECUTABLE_PLAN__={app:{id:'voice-lab'},library:{selected:[{id:'uk.capp.sidecar.local-ai'}]}};
+ window.__nativeCalls=[];window.__nativeFailure='';let state={loaded:false};
+ window.cappLocalAiNative={dialogue:async raw=>{const r=JSON.parse(raw);__nativeCalls.push(r);if(r.op==='status')return {ok:true,supported:true,models:models.map(m=>({...m,available:true})),state};if(__nativeFailure)throw Error(__nativeFailure);state={loaded:true,model:r.model,device:'cuda',deviceName:'Test GPU (controlled response)'};return {ok:true,...state,requestId:r.requestId,seed:r.seed,audioWav:audio,generationMs:15};}};
+ (0,eval)(owner);const api={};window.__CAPP_INSTALL_LOCAL_DIALOGUE__({api,getConfig:()=>({allowAppSpeech:true}),getIdentity:()=>({id:'voice-lab'}),scope:window});window.capp={ai:{local:api}};
+},{owner,models,audio:wav.toString('base64')});
+const page=await context.newPage();page.on('pageerror',e=>errors.push(String(e)));
+const wait=()=>page.waitForFunction(()=>document.body.dataset.libraryReady==='true'&&document.body.dataset.libraryBusy==='false'&&document.body.dataset.dialogueBusy!=='true');
+const click=async id=>{await page.locator('#'+id).click();await wait();};
+try{
+ await page.goto(url);await wait();await click('dialogue-tab');
+ check('Library opens without preparing a model',await page.evaluate(()=>__nativeCalls.every(c=>c.op==='status')));
+ await click('library-new-character');await page.locator('#dialogue-character').fill('Alex');await page.locator('#dialogue-model').selectOption('qwen-clone');
+ await page.locator('#dialogue-reference-file').setInputFiles({name:'Alex-reference.wav',mimeType:'audio/wav',buffer:wav});await wait();
+ await page.locator('#dialogue-transcript').fill('The exact words in Alex’s saved voice sample.');await page.locator('.character-details summary').click();await page.locator('#character-notes').fill('Salvage captain; dry humour.');await click('dialogue-save-character');
+ let alex=await page.evaluate(async()=>{const rows=await voiceLabLibrary.characters.list();return voiceLabLibrary.characters.get(rows.find(c=>c.name==='Alex').id);});
+ check('Upload and name persist the real converted sample and transcript',alex.reference.duration===6&&alex.reference.text.includes('exact words'));
+ await page.locator('#dialogue-line-title').fill('Arriving at the docks');await page.locator('#dialogue-line-type').fill('Greeting');await page.locator('#dialogue-text').fill('Welcome aboard, captain.');await page.locator('.line-details summary').click();await page.locator('#dialogue-line-tags').fill('act-1, friendly');await click('dialogue-save-line');await click('dialogue-generate');
+ check('A render saves its WAV against its dialogue',await page.locator('#saved-takes-count').textContent()==='1');
+ const line=await page.evaluate(async()=> (await voiceLabLibrary.dialogues.list({query:'Arriving'})).items[0]);
+ await page.evaluate(()=>__nativeFailure='dialogue_engine_failed:TypeError: stage=chatterbox-model-load: fixture cause');await click('dialogue-generate');
+ check('Failure remains actionable and does not create a false saved take',(await page.locator('#dialogue-error-code').textContent()).includes('fixture cause')&&(await page.locator('#saved-takes-count').textContent())==='1');await page.evaluate(()=>__nativeFailure='');
+ await click('library-new-character');await page.locator('#dialogue-character').fill('Ada');await page.locator('#dialogue-model').selectOption('qwen-design');await page.locator('#dialogue-line-title').fill('At the market');await page.locator('#dialogue-line-type').fill('greeting');await page.locator('#dialogue-text').fill('Good morning. Looking for supplies?');await click('dialogue-save-line');
+ await page.locator('#library-character-filter').selectOption('');await page.locator('#library-search').fill('greeting');await page.waitForFunction(()=>document.querySelector('#library-lines').children.length===2);
+ check('One shared Greeting type finds multiple characters',(await page.evaluate(()=>voiceLabLibrary.types.list())).length===1);
+ await page.locator(`[data-character-id="${alex.id}"]`).click();await wait();await page.waitForFunction(()=>document.querySelector('#library-lines').children.length===1);
+ check('Selecting a character restores sample/transcript and scopes dialogue',(await page.locator('#dialogue-transcript').inputValue())===alex.reference.text&&(await page.locator('#dialogue-model').inputValue())==='qwen-clone');
+ await page.locator(`[data-dialogue-id="${line.id}"]`).click();await wait();check('Opening saved dialogue restores its text',(await page.locator('#dialogue-text').inputValue())==='Welcome aboard, captain.');
+ await page.locator('#dialogue-text').fill('Unsaved change');await page.locator('#library-new-dialogue').click();await page.locator('#library-confirm').waitFor({state:'visible'});await page.locator('#library-confirm-cancel').click();await wait();
+ check('Changing selections cannot silently discard an unsaved line',(await page.locator('#dialogue-text').inputValue())==='Unsaved change');await click('dialogue-save-line');
+ await page.reload();await wait();await click('dialogue-tab');check('Real browser reload restores character reference audio and transcript',(await page.locator('#dialogue-transcript').inputValue())===alex.reference.text);
+ await page.locator(`[data-dialogue-id="${line.id}"]`).click();await wait();await page.locator('#saved-takes button').filter({hasText:'Audition'}).click();await wait();
+ const saved=await page.locator('#saved-takes a').evaluate(async a=>Array.from(new Uint8Array(await (await fetch(a.href)).arrayBuffer())));
+ check('Saved recording survives reload with exact WAV bytes',Buffer.from(saved).equals(wav));
+ const oldText=await page.locator('#saved-takes details').textContent();check('Recording keeps original words after the line is edited',oldText.includes('Welcome aboard, captain.'));
+ for(const width of [1440,768,390]){await page.setViewportSize({width,height:1000});check(`No horizontal overflow at ${width}px`,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:path.join(output,`library-${width}.png`),fullPage:true});}
+ await page.setViewportSize({width:1440,height:1080});
+ const downloadWait=page.waitForEvent('download');await click('library-export');const download=await downloadWait;await download.saveAs(path.join(output,'backup.json'));const backup=JSON.parse(await fs.readFile(path.join(output,'backup.json'),'utf8'));
+ check('Backup button exports reference audio and saved recordings',backup.characters.some(c=>c.reference?.audioWav)&&backup.takes.length===1);
+ const second=await browser.newContext(),restore=await second.newPage();restore.on('pageerror',e=>errors.push(String(e)));await restore.goto(url);await restore.waitForFunction(()=>document.body.dataset.libraryReady==='true');await restore.locator('#dialogue-tab').click();
+ await restore.locator('#library-file').setInputFiles(path.join(output,'backup.json'));await restore.waitForFunction(()=>document.querySelector('#library-status').textContent.startsWith('Imported'));
+ check('Backup imports through the UI into a separate profile',await restore.evaluate(async()=> (await voiceLabLibrary.dialogues.list()).total===2&&(await voiceLabLibrary.export()).takes.length===1));
+ await restore.close();await second.close();
+ const concurrent=await context.newPage();await concurrent.goto(url);await concurrent.waitForFunction(()=>document.body.dataset.libraryReady==='true');
+ await concurrent.evaluate(async id=>{const row=await voiceLabLibrary.characters.get(id);await voiceLabLibrary.characters.save({...row,notes:'Changed in another window'});},alex.id);
+ await click('dialogue-save-character');check('A second window cannot be silently overwritten',(await page.locator('#library-error').textContent()).includes('another window'));
+ await page.locator(`[data-character-id="${alex.id}"]`).click();await page.locator('#library-confirm').waitFor({state:'visible'});await page.locator('#library-confirm-accept').click();await wait();
+ check('Conflict recovery reloads the saved character',(await page.locator('#character-notes').inputValue())==='Changed in another window');await concurrent.close();
+ check('No browser script errors',errors.length===0);
+ await fs.writeFile(path.join(output,'result.json'),JSON.stringify({checks,errors,scope:'Real Chromium storage/UI/audio conversion; controlled native replies, no neural/Windows certification.'},null,2));
+}finally{await context.close();await browser.close();await new Promise(r=>server.close(r));}

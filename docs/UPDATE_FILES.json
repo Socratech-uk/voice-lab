@@ -1,0 +1,123 @@
+{
+  "input": "voice-lab(20261014-105441).zip",
+  "inputSha256": "9ecfdd49e9fa8d695bdc2da3cddd5014c3a1046993fb10d3b8c8cf294c6f6723",
+  "labVersion": "1.7.0",
+  "scope": "Full Voice Lab source; no cApp, Kestrel, recordings, models or development dependencies. This manifest excludes its own hash.",
+  "changes": [
+    {
+      "path": "CHANGELOG.md",
+      "before": "1fe35e78eab5fecff9d020d7ed59157502898e7b2d1fb1cbb423ea9be77bd772",
+      "after": "0a56a088cb7644f1afc2a7d65404ee066ee6dd6e09b8fd642a6b69afb4d818a0"
+    },
+    {
+      "path": "README.md",
+      "before": "78337ec11634186d3137b0f7d4217fb8ac59b9805c1848a91782d67b8ed068a5",
+      "after": "030099061709d8b97f487468b2dc273771a2f7595226464c2d5443b0750314cf"
+    },
+    {
+      "path": "docs/ASSET_MANAGER.md",
+      "before": null,
+      "after": "79e7417caa52418ad89e1e4072a0701dd6c1c5ceb68f2b71767c6d23801eedca"
+    },
+    {
+      "path": "docs/INTEGRATION.md",
+      "before": "57c72cca23165b05cf5413a5bfee0eb11f16876c9151acbf3f9c5d51d5222b6c",
+      "after": "43aac4a3db96f12c1eb580445858139541c13d28958c26dff3bb2a51894207c1"
+    },
+    {
+      "path": "docs/PROJECT_AUDIO.md",
+      "before": "d2a24a1f1e4e16f44963ab5c6d0f5b0eae2c2c2f050bac01d019ab9c2019e24e",
+      "after": "648b6be4ffb83c0afd0a15a6fa113745acf228030daaecc43aa1904a3168f5be"
+    },
+    {
+      "path": "docs/SOURCE_REFERENCE.json",
+      "before": "f95228e1eae848232958a1cf9bf3d309f35435f1b8581ee57e3e5ade764dc117",
+      "after": "b0a40ef134443779d5ecdf06a4a43acffe8799daeb4bad5cb51cb3b9b24bb2f6"
+    },
+    {
+      "path": "docs/VERIFICATION.md",
+      "before": "28b66b85d41321a3adcece606701e554f1131fd5004bc83b932f47a549050a8f",
+      "after": "8b5f6059b836cc57d7eaed8a29393397ec81260efbf55f2f0cc176555bfd1bef"
+    },
+    {
+      "path": "docs/validation/asset-manager-browser-2026-10-14.json",
+      "before": null,
+      "after": "b58dc45e45b4f5f117caa727e8c8c3c785d5064d8746567ef191dbe004f8d4c2"
+    },
+    {
+      "path": "index.html",
+      "before": "f849ee7622fcf8e91bcd24c21b4685d8840e247f2fe019e8e8c1296aac2c654b",
+      "after": "aac8e4e3ee34bd1ccdaa2d13f55feb360bb887cc499c06f668465c5f90ee8c63"
+    },
+    {
+      "path": "schemas/voice-lab-audio-batch.v1.schema.json",
+      "before": "3d5cb3b35b5204f4b40a20038bc7dda6d1bc3fdfe73d006363bd678539f6ff0f",
+      "after": "847930a80723ca27fe271283dafabd6009ae6761640ecdf0d9355cbb849c54fa"
+    },
+    {
+      "path": "src/asset-manager-ui.mjs",
+      "before": null,
+      "after": "fe17734ba99ad7a5b0637483b88701a72fd45f86922fa7409e3491faddb8f212"
+    },
+    {
+      "path": "src/asset-manager.mjs",
+      "before": null,
+      "after": "a4e2702a5796ad2b51348e7907f5747f14ebc7055cfd940565d9fef53ab782c5"
+    },
+    {
+      "path": "src/audio-assets.mjs",
+      "before": "c76d77b9d87d5f4be529d6fb2fb2445b3a645e4ce9938579171da42a3e66d39c",
+      "after": "0fb18f8cc99f731c76690612c9f241f8a142bd82420ec80476f2e3bd70e00a1f"
+    },
+    {
+      "path": "src/audio-ui.mjs",
+      "before": "2d755a5f780ed124899d556ede5bbe3ebee1e8746de8fcad678611bca17fa5c4",
+      "after": "02f5d903a1962ec397b51219e7804fb9ac0e6d6379d7a9c3c8acb16a5483137b"
+    },
+    {
+      "path": "src/index.template.html",
+      "before": "2f3130369f61f76e9e3c6350637c200c5c8a974c4dfb4f82ae03b1133e2c4a31",
+      "after": "006e44a560f36582b651aea3a97e5dd1420c79db51ef9ebfcc6d1eabc85b859a"
+    },
+    {
+      "path": "src/lab.mjs",
+      "before": "43645894de457b47281656f99e2e23b2359c04bd7540167e65bb9ccbf092121d",
+      "after": "ca8352e3a447a932e469d2155f232678823bcbcc5fe3e7f7f306e9c2944b556c"
+    },
+    {
+      "path": "src/library.mjs",
+      "before": "6c8a89702b01b0fb9e62229819fd26515f471e86bcd68e0646190a10b4274f62",
+      "after": "8a76eca7ca6fc020d407b8725683511810eff41191aef2d73c7b32355e623b11"
+    },
+    {
+      "path": "src/project-audio-ui.mjs",
+      "before": "193f9cdccf5ae621bad2b8298855c69576abbcfd1f5a9590663e71160b30216c",
+      "after": "1a231875515227887308bf0613b12f663b1ac5e023655d92a217b276c84067e6"
+    },
+    {
+      "path": "src/project-audio.mjs",
+      "before": "4d93b2f8b3a3695efc1772d120a9ec23fa2a463ebd938ff4e145a81d70b752d7",
+      "after": "157ba1154d5f6f8e089409c47b7900542cefe686f01826b1e65554f879e758ab"
+    },
+    {
+      "path": "src/style.css",
+      "before": "0a28372d5f04077dc4ad832aed055d7298e2029c58b1e9ccb8d95834326570c2",
+      "after": "f8e8b22ad62e2166679f17ad62bfc71289fa66ce3b3e38e0aeaa66cad225411a"
+    },
+    {
+      "path": "tests/asset-manager-browser.mjs",
+      "before": null,
+      "after": "d01e5ad27da5a5f8dc5992d5f7a3ce25b0103121d03d40c0cd71fdfc78d4ac49"
+    },
+    {
+      "path": "tests/asset-manager.mjs",
+      "before": null,
+      "after": "c623691882dc553f00ebb7e96cca0ddb4de786856545c2a24f188b76bd13d8a8"
+    },
+    {
+      "path": "tools/build.py",
+      "before": "c6e51806c237972e8a275cb4fd9bca8e6325841973fdf1b913fb2123113eed92",
+      "after": "cc649087522606d2323a2add3dcb1af870a1729d05551a5d49a7d6382159e602"
+    }
+  ]
+}

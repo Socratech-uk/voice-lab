@@ -1,0 +1,71 @@
+{
+  "input": "voice-lab(20261015-163002).zip",
+  "changes": [
+    {
+      "path": "README.md",
+      "before": "030099061709d8b97f487468b2dc273771a2f7595226464c2d5443b0750314cf",
+      "after": "eb8302297730407d49bfa68c7fbdfeceb3aa6a8a225dd8e1bb38b0e398078695"
+    },
+    {
+      "path": "docs/INTEGRATION.md",
+      "before": "43aac4a3db96f12c1eb580445858139541c13d28958c26dff3bb2a51894207c1",
+      "after": "4c0670963f7f8d3639f2541f897e27701c9eb287fa0ddca9bd685d2cccbfc7b2"
+    },
+    {
+      "path": "docs/PROJECT-ASSETS-VERIFICATION.json",
+      "before": null,
+      "after": "fb7cc478de367f81ef39212e38ca14fc158caa91d733969d8cba53357b388fdf"
+    },
+    {
+      "path": "docs/PROJECT-ASSETS.md",
+      "before": null,
+      "after": "b75200717e12b3ce03bacb03c449b3287885c592c998e464f4313fb091d91230"
+    },
+    {
+      "path": "index.html",
+      "before": "aac8e4e3ee34bd1ccdaa2d13f55feb360bb887cc499c06f668465c5f90ee8c63",
+      "after": "92b50d88f8ba05356e04595caa388338e0f559b05dbad9733ca1688ebcd918e0"
+    },
+    {
+      "path": "memory.md",
+      "before": null,
+      "after": "c73a03574dc8b0d50898951de1c8f65a8e515a4971efc11fbc760ade3152dd50"
+    },
+    {
+      "path": "src/asset-manager-ui.mjs",
+      "before": "fe17734ba99ad7a5b0637483b88701a72fd45f86922fa7409e3491faddb8f212",
+      "after": "99461697debb467b9577c0a8a5b1598c696805c1f8d3ef413d4b25a26ca64fb5"
+    },
+    {
+      "path": "src/index.template.html",
+      "before": "006e44a560f36582b651aea3a97e5dd1420c79db51ef9ebfcc6d1eabc85b859a",
+      "after": "a6e71fd9ae119ade1753fafdeceb1eb9d4ba04d971b3d879a6a098e6aa5a1b0d"
+    },
+    {
+      "path": "src/lab.mjs",
+      "before": "ca8352e3a447a932e469d2155f232678823bcbcc5fe3e7f7f306e9c2944b556c",
+      "after": "118dc0d05059f929299cad94d33da4cba2d2c9fde8e939752c74fbe6a60bf709"
+    },
+    {
+      "path": "src/project-assets-ui.mjs",
+      "before": null,
+      "after": "a7238743360138ff4042828d42f653f34064a75f00e4e678d057cd48a1bc6658"
+    },
+    {
+      "path": "src/project-workspace.css",
+      "before": null,
+      "after": "d1b96de020de33129d5dc607e6d909e78e48aa8a626ed73d94e032e41c3f709d"
+    },
+    {
+      "path": "src/project-workspace.mjs",
+      "before": null,
+      "after": "607748e595d86eea052896b9e7611bcd0836f7c791c0251f0284603ef2dbb83c"
+    },
+    {
+      "path": "tools/build.py",
+      "before": "cc649087522606d2323a2add3dcb1af870a1729d05551a5d49a7d6382159e602",
+      "after": "efb882b704d28e8e4404c105c842b6231944c5a0b050c598f87bd32e4a69ce5d"
+    }
+  ],
+  "removed": []
+}

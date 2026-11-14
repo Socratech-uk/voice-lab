@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "owner": "Socratech-uk",
+  "repository": "voice-lab",
+  "branch": "main",
+  "visibility": "public",
+  "requirePrivate": false,
+  "description": "Voice Lab audio, character voices and dialogue authoring",
+  "allowedTestSecretHashes": []
+}

@@ -1,0 +1,423 @@
+{
+  "purpose": "Voice Lab 1.7.0 asset manager and workspace redesign",
+  "localAi": "0.16.0",
+  "textProtocol": "capp.local-ai-connection.v1",
+  "speechProtocol": "capp.local-speech.v1",
+  "appBridgeProtocol": "capp.local-ai-app-bridge.v1",
+  "references": [
+    {
+      "path": "sidecars/local-ai/platforms/android/runtime/local-ai-shell.css",
+      "sha256": "8e4a62ce9af71b2e682c2c6920b7fd4b98a459c6762dd54f319c782acb349dae"
+    },
+    {
+      "path": "sidecars/local-ai/platforms/android/runtime/local-ai-shell.js",
+      "sha256": "752b77192ca4b13c897fcf767684dfac494b0c82463db8e9bd81c3efd7861fc0"
+    },
+    {
+      "path": "sidecars/local-ai/platforms/windows/runtime/local-ai-shell.js",
+      "sha256": "c9da6a20c9302bc4dca77eddeaa2e30ca94ba4eaaaff564ddeecfaea4f33bf32"
+    },
+    {
+      "path": "sidecars/local-ai/runtime/local-speech.js",
+      "sha256": "6a352407c4c7a9934074ae356dc2d8bf972422ee67357542241018f220876991"
+    },
+    {
+      "path": "sidecars/local-ai/runtime/local-ai-app-bridge.js",
+      "sha256": "43293d9629e10f2a2f87c76d2dd0d4fb4a74f50abc4067f44f67551c256734ba"
+    },
+    {
+      "path": "sidecars/local-ai/native/speech_worker.py",
+      "sha256": "31d0997f138b3e3c42b00a683c7c4f81abc17197d4a2d72515ddd33c4830754c"
+    },
+    {
+      "path": "tools/cappfactory_core.py",
+      "sha256": "5fb83b94bf3f732715858c0e7fc30be1116fac4906e0d638bd35f5b328374911"
+    },
+    {
+      "path": "sidecars/local-ai/runtime/local-dialogue.js",
+      "sha256": "292f65144e3be78a8513668042472ebb5912a0862d79fb841c6baeac6f9b07f3"
+    },
+    {
+      "path": "sidecars/local-ai/native/dialogue_windows.rs",
+      "sha256": "345bc1d9b06f6a51e52e1a686e759e5e9cc22561ee05eea7b946de905c1b2f05"
+    },
+    {
+      "path": "sidecars/local-ai/native/dialogue_worker.py",
+      "sha256": "af8ef0abce541793faf85bb5a7538b466a8c94768867b17e967f753efa7128c5"
+    },
+    {
+      "path": "sidecars/local-ai/native/dialogue-models.json",
+      "sha256": "cfcce3bb15407c71a4af49e212450f72feff9dfa2c204b268b04bc117dadc445"
+    },
+    {
+      "path": "sidecars/local-ai/native/dialogue-qwen.json",
+      "sha256": "f2a69a1fe014d18f911ec2eabb36a61d8383284e16fcbd328e9faca366fac8d2"
+    },
+    {
+      "path": "sidecars/local-ai/native/dialogue-chatterbox.json",
+      "sha256": "ab8f0d20ef8d88f651e20873e2d56d4e837b1c8fe3bc853f4d6f399c088cb01c"
+    },
+    {
+      "path": "tools/capp_dialogue_bundle.py",
+      "sha256": "a1cd240575ca2ec0c0a14649f239af678e6b67251f5e5cf90897ac5f737c4bc3"
+    },
+    {
+      "path": "tools/capp_dialogue_portable.py",
+      "sha256": "7ad1628a911299fa0a4cd31d12dbb69b85a530fcea997ecdab94aa2b98c361bd"
+    },
+    {
+      "path": "mcp/capp_mcp_server.py",
+      "sha256": "3a27e501285ac7d1f8cef946476b2c3b73eec17220c6df70812d7daf98d6902c"
+    },
+    {
+      "path": "tools/capp_speech_bundle.py",
+      "sha256": "6194d73651dc471efd11aa71d521744d8603ca74bf53c3acd9b7f1faf2fb3e2b"
+    },
+    {
+      "path": "sidecars/local-ai/native/dialogue-audio.json",
+      "sha256": "9b6983803290059ed3d264b14ef04153b6858a11b77009960e99f2f84012abf3"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/engine.py",
+      "sha256": "381f3f33f68b1741cf944160ae4e78b22f04504840c238de08b6de0020af0e78"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/NOTICE.txt",
+      "sha256": "a70645c610af2c83fea61ee252cf3fb1e2f517076656e482b5b15b83c5167ab5"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/rung_dit.py",
+      "sha256": "229531d9a6298094427def0aa2715814c0324ba0bde819cd77f7f8797168f061"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/PROVENANCE.json",
+      "sha256": "993f153c7379a95d72e5b2bc9941f497cf584f2290a7d56551f3ce9e8fa950e9"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/tflite_pipeline.py",
+      "sha256": "229f34424d8ace818e416a8a3e50b92b859a074af44f4d5ed29eddc845b30e64"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/__init__.py",
+      "sha256": "3d8ab8e4ca02cc848591917ba5b0028af979fc43b2ab08c5dfb1e954e31a7df9"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/LICENSE",
+      "sha256": "16bd922f0deee6f11a76f5582258fdc3abdf67c6b8719dbcafbc34dee31979a6"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/MODEL-LICENSE.md",
+      "sha256": "d6f6b1a4dce5c852bd6d7d9482d002baf0ccdb71e662250b73be9eec8764ee8d"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/rung_decoder.py",
+      "sha256": "df2e9e76474ab10ba524e89daea1bdae2d610e1ab51afa863862e681dd888b5a"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/MODEL-LICENSE_GEMMA.md",
+      "sha256": "e77acc0d3163bb7534675045c584b4d04b387b529239fc4b3647da0a01ba4745"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/onnx_dit.py",
+      "sha256": "45952922a238f9e3f63cb7ceeb2d7d7ee9eb4b709a875d73d16863781c2f132d"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/continuation.py",
+      "sha256": "64aa846d15cb473449ec24dc7dbe0883a61eb7c387bf7bfb829c166cb73bad7b"
+    },
+    {
+      "path": "sidecars/local-ai/native/capp_sa3/rung_encoder.py",
+      "sha256": "91f012f86a5f76e66ba94b6478c728b66480f06dab1b07e86e7f1ef8b8290a76"
+    },
+    {
+      "path": "sidecars/local-ai/contracts/local-audio.d.mts",
+      "sha256": "4e8eb7188ecab2175afda83cb78da23bbed503c4daede292dab1181c8411eebf"
+    },
+    {
+      "path": "sidecars/local-ai/runtime/audio-projects.js",
+      "sha256": "ffe5a417b9724bc0ab3d8bc5b172b08c45f91e33a212cdbd73e2a780f4e34b6a"
+    },
+    {
+      "path": "sidecars/local-ai/native/audio_projects.rs",
+      "sha256": "a94899f29db29085d219d79922cfff519d79b0ae6831827c2ed79fa8f63e01ab"
+    }
+  ],
+  "inputs": {
+    "capp": {
+      "archive": "capp-v1(20261014-094406).zip",
+      "sha256": "bc05cc875332769e4d9d43edc0dd39c3f4bca549c23fc2267d911519379a802b"
+    },
+    "lab": {
+      "archive": "voice-lab(20261014-084216).zip",
+      "sha256": "264de65c6b3be22d7662cf51335fce22eba21f0b3930161a768d80acdac4851d"
+    },
+    "kestrel": {
+      "archive": "kestrel(20261014-084315).zip",
+      "sha256": "b83999dd75667c6ef171cd444da14d811e33aa6c1c59728a5efec3487b4c3bab"
+    }
+  },
+  "historical1_0_0": {
+    "purpose": "Read-only source reference for this new app; platform files not bundled in its runtime",
+    "localAi": "0.10.1",
+    "textProtocol": "capp.local-ai-connection.v1",
+    "speechProtocol": "capp.local-speech.v1",
+    "references": [
+      {
+        "path": "sidecars/local-ai/platforms/android/runtime/local-ai-shell.css",
+        "sha256": "8e4a62ce9af71b2e682c2c6920b7fd4b98a459c6762dd54f319c782acb349dae"
+      },
+      {
+        "path": "sidecars/local-ai/platforms/android/runtime/local-ai-shell.js",
+        "sha256": "92e24d8ce250f55217e01431dcdc2558c53d3af571a3b5d31f26664f578f085c"
+      },
+      {
+        "path": "sidecars/local-ai/platforms/windows/runtime/local-ai-shell.js",
+        "sha256": "53e680d838c243e1df2200bd3fc40353438a93f34d556795a6c2d7e8914dccbe"
+      },
+      {
+        "path": "sidecars/local-ai/runtime/local-speech.js",
+        "sha256": "ba6b34caafcb0cccda1d69a61bf33bfd8600b050626330a9d48b83e9b63b1777"
+      }
+    ],
+    "archives": [
+      {
+        "name": "capp-v1(20261002-105025).zip",
+        "sha256": "2df2e28125737e2215cf789b1b02ff74dee89c0c412c9ac9e7ee3fb17638eee6"
+      },
+      {
+        "name": "cApp_Local_AI_0.10.1_Managed_Speech_Overlay.zip",
+        "sha256": "cb73d1b5a8ce7f15b9e9ff8333f6714a5d84098bd07c68fe661a8e4b51ccc5d2"
+      },
+      {
+        "name": "SOL_Explorer_1.34.0_Ship_Computer_Overlay.zip",
+        "sha256": "3b716588b06a05f3275c375df34b97c8c957520801ff27f69852c7fabe1c7ca7"
+      }
+    ]
+  },
+  "labVersion": "1.7.0",
+  "localAiMinimum": "0.16.0",
+  "historical1_1_1": {
+    "purpose": "Voice Lab 1.1.1 application source reference; platform runtime remains supplied by selected cApp Local AI Sidecar",
+    "localAi": "0.11.5",
+    "references": [
+      {
+        "path": "sidecars/local-ai/platforms/android/runtime/local-ai-shell.css",
+        "sha256": "8e4a62ce9af71b2e682c2c6920b7fd4b98a459c6762dd54f319c782acb349dae"
+      },
+      {
+        "path": "sidecars/local-ai/platforms/android/runtime/local-ai-shell.js",
+        "sha256": "9993ff71ca990a730432d0cb9225a5f51eb63f1b1832fda51c53da540f931ebc"
+      },
+      {
+        "path": "sidecars/local-ai/platforms/windows/runtime/local-ai-shell.js",
+        "sha256": "53e680d838c243e1df2200bd3fc40353438a93f34d556795a6c2d7e8914dccbe"
+      },
+      {
+        "path": "sidecars/local-ai/runtime/local-speech.js",
+        "sha256": "1516089b0399ac6a853d5bb58fb80e6f40b890a6032bc5b691db023de056043a"
+      },
+      {
+        "path": "sidecars/local-ai/runtime/local-ai-app-bridge.js",
+        "sha256": "86d9f963571547833897adf1a1b97779f627ce7204a4afe5026bb665ab202630"
+      },
+      {
+        "path": "sidecars/local-ai/native/speech_worker.py",
+        "sha256": "70e85b96c52e7ec3524ccf85f9943e16992004c0c39bae99e420f9cc5a8af9f5"
+      },
+      {
+        "path": "tools/cappfactory_core.py",
+        "sha256": "6b9af834384dd2a680e3c56915ac1dfb55bb0ae49cad30321287171f5c1722ff"
+      }
+    ],
+    "inputs": {
+      "capp": {
+        "archive": "capp-v1(20261002-220601).zip",
+        "sha256": "9057302538d196b7fc1cac3ac4adeb5a8321673090320faf18fd58839319072e"
+      },
+      "lab": {
+        "archive": "voice-lab(4).zip",
+        "sha256": "8d7ae444cc29afe4e657c29c41e450c9ea8e78a65e15a6b3637b23064cf3cde1"
+      }
+    },
+    "labVersion": "1.1.1",
+    "localAiMinimum": "0.11.5"
+  },
+  "mcpMinimum": "0.24.15",
+  "dialogueProtocol": "capp.local-dialogue.v1",
+  "historical1_2_0": {
+    "purpose": "Voice Lab 1.2.0 with optional Qwen/Chatterbox authoring through the selected cApp dialogue runtime",
+    "localAi": "0.12.0",
+    "references": [
+      {
+        "path": "sidecars/local-ai/platforms/android/runtime/local-ai-shell.css",
+        "sha256": "8e4a62ce9af71b2e682c2c6920b7fd4b98a459c6762dd54f319c782acb349dae"
+      },
+      {
+        "path": "sidecars/local-ai/platforms/android/runtime/local-ai-shell.js",
+        "sha256": "275691248d5ecbca0b3213454b8d1d8f88e50d0b37eb7ccae073b1c25586489a"
+      },
+      {
+        "path": "sidecars/local-ai/platforms/windows/runtime/local-ai-shell.js",
+        "sha256": "d95fac02335589ca6c95af363b703dc20243ee0ac7fcb084724569fcb2507491"
+      },
+      {
+        "path": "sidecars/local-ai/runtime/local-speech.js",
+        "sha256": "e1468d94a808024d4c5e462819a742acd2f60395e007b07cc240bc1b2b849983"
+      },
+      {
+        "path": "sidecars/local-ai/runtime/local-ai-app-bridge.js",
+        "sha256": "b06bb0fee7ef693cdf0d65ba2348db2764fe77f8b212ad8cc596cae06ccf90ff"
+      },
+      {
+        "path": "sidecars/local-ai/native/speech_worker.py",
+        "sha256": "31d0997f138b3e3c42b00a683c7c4f81abc17197d4a2d72515ddd33c4830754c"
+      },
+      {
+        "path": "tools/cappfactory_core.py",
+        "sha256": "4bde2627919a4b3cd009f08e819169b1fdaa6259909827d79e8b08646e310d3d"
+      },
+      {
+        "path": "sidecars/local-ai/runtime/local-dialogue.js",
+        "sha256": "5ed912eaf6948750894662596af875004699163abd17ab30cddc2b39eca4a3f2"
+      },
+      {
+        "path": "sidecars/local-ai/native/dialogue_windows.rs",
+        "sha256": "b86945245fffa6a9ab4a5f083b000702c61c6f2793598f1ddef2f9179c246ad6"
+      },
+      {
+        "path": "sidecars/local-ai/native/dialogue_worker.py",
+        "sha256": "c8b3327c8c8cdc22fba93ca7c409859a0c6e160c6d0e2fb0f76aafaa11bc624e"
+      },
+      {
+        "path": "sidecars/local-ai/native/dialogue-models.json",
+        "sha256": "bb85ea0ffed066d550578d0ed5a780a8ccb614557fd711f64cb755b3c080abef"
+      },
+      {
+        "path": "sidecars/local-ai/native/dialogue-qwen.json",
+        "sha256": "db85c2442f3aa97f4c8c48d6299b0cc75673fc2b91e6f66c60e6071bf518399e"
+      },
+      {
+        "path": "sidecars/local-ai/native/dialogue-chatterbox.json",
+        "sha256": "3275691c461490973e5bfed5524740eed1142bb46e8b201d6bed8e0e9ea45eeb"
+      },
+      {
+        "path": "tools/capp_dialogue_bundle.py",
+        "sha256": "e7c359eaa52ed25d7da57ad9584c0bc15ec1853848c91800eb0365828c1283f4"
+      },
+      {
+        "path": "tools/capp_dialogue_portable.py",
+        "sha256": "ab0a875e61f89aac26a7ab68e19ef817b26d93eed8b20b9ee7ff91aa923d42d6"
+      },
+      {
+        "path": "mcp/capp_mcp_server.py",
+        "sha256": "b5111cb827c913d7b233b2d0a9c3ff8709bc82a9980606752b4d068fce23e913"
+      }
+    ],
+    "inputs": {
+      "capp": {
+        "archive": "capp-v1(20261011-173347).zip",
+        "sha256": "05185cc46c000c69c8b4b0180fcc678030e1b4eadd73f8397426eeee820ebaa8"
+      },
+      "lab": {
+        "archive": "voice-lab.zip",
+        "sha256": "d87b136aab8cadf91ab4d392430adbd94f1c8703b0cf7d6cb3b3eed32d85c9ab"
+      }
+    },
+    "labVersion": "1.2.0",
+    "localAiMinimum": "0.12.0",
+    "mcpMinimum": "0.24.3"
+  },
+  "libraryProtocol": "capp.voice-lab.library.v1",
+  "libraryApiProtocol": "capp.voice-lab.library-api.v1",
+  "historical1_3_0": {
+    "purpose": "Voice Lab 1.3.0 persistent character/dialogue library and Local AI Chatterbox dependency repair",
+    "localAi": "0.13.1",
+    "references": [
+      {
+        "path": "sidecars/local-ai/platforms/android/runtime/local-ai-shell.css",
+        "sha256": "8e4a62ce9af71b2e682c2c6920b7fd4b98a459c6762dd54f319c782acb349dae"
+      },
+      {
+        "path": "sidecars/local-ai/platforms/android/runtime/local-ai-shell.js",
+        "sha256": "426153c8aa9a25dc32970b2aca8ee02f6e3373dd147fbca3baffd0e2fd8a08e6"
+      },
+      {
+        "path": "sidecars/local-ai/platforms/windows/runtime/local-ai-shell.js",
+        "sha256": "d95fac02335589ca6c95af363b703dc20243ee0ac7fcb084724569fcb2507491"
+      },
+      {
+        "path": "sidecars/local-ai/runtime/local-speech.js",
+        "sha256": "6a352407c4c7a9934074ae356dc2d8bf972422ee67357542241018f220876991"
+      },
+      {
+        "path": "sidecars/local-ai/runtime/local-ai-app-bridge.js",
+        "sha256": "b06bb0fee7ef693cdf0d65ba2348db2764fe77f8b212ad8cc596cae06ccf90ff"
+      },
+      {
+        "path": "sidecars/local-ai/native/speech_worker.py",
+        "sha256": "31d0997f138b3e3c42b00a683c7c4f81abc17197d4a2d72515ddd33c4830754c"
+      },
+      {
+        "path": "tools/cappfactory_core.py",
+        "sha256": "1ef1a312ba029bd76e8d5dd63edbe46d5bccd9cc13af167497a58b97750f1b89"
+      },
+      {
+        "path": "sidecars/local-ai/runtime/local-dialogue.js",
+        "sha256": "6984bbb3e050149e08125681aa68ac6782fc75f43a41005cd097a870fc9503d5"
+      },
+      {
+        "path": "sidecars/local-ai/native/dialogue_windows.rs",
+        "sha256": "19d68f9038fe23ef7385377820db15528b713404cf62dcebc5153d288057d5ac"
+      },
+      {
+        "path": "sidecars/local-ai/native/dialogue_worker.py",
+        "sha256": "a9ada41a067b3e123daf4f291f3995f55ac01b6ba9cfef8f3e4ec798bb1da900"
+      },
+      {
+        "path": "sidecars/local-ai/native/dialogue-models.json",
+        "sha256": "bb85ea0ffed066d550578d0ed5a780a8ccb614557fd711f64cb755b3c080abef"
+      },
+      {
+        "path": "sidecars/local-ai/native/dialogue-qwen.json",
+        "sha256": "f2a69a1fe014d18f911ec2eabb36a61d8383284e16fcbd328e9faca366fac8d2"
+      },
+      {
+        "path": "sidecars/local-ai/native/dialogue-chatterbox.json",
+        "sha256": "95a2aba000aec2644d471e9d0e73c4a8860566b463a93e77a63b577ca0a565cf"
+      },
+      {
+        "path": "tools/capp_dialogue_bundle.py",
+        "sha256": "aa6d9377c3cae9e029c8fec98f1853f93c0584d012f32a664032271d23c005ff"
+      },
+      {
+        "path": "tools/capp_dialogue_portable.py",
+        "sha256": "ab0a875e61f89aac26a7ab68e19ef817b26d93eed8b20b9ee7ff91aa923d42d6"
+      },
+      {
+        "path": "mcp/capp_mcp_server.py",
+        "sha256": "4690cf284ce1d3c8198e45a40215db043f110da03f78086b168b42e85f283386"
+      },
+      {
+        "path": "tools/capp_speech_bundle.py",
+        "sha256": "18a0170ac73a65ad2fe5b05957a3b4cc9cf717bf15ab1b828efbe6f1bce9c151"
+      }
+    ],
+    "inputs": {
+      "capp": {
+        "archive": "capp-v1(20261012-095327)(1).zip",
+        "sha256": "f2d3423f7f20f6ae2132801d1d691c5add0d7542980066fe17ad57fee55314f0"
+      },
+      "lab": {
+        "archive": "voice-lab(8).zip",
+        "sha256": "2a639eda4d3c380d35bc47161fdeb585adfcd8007c2a60dd84a5285639b93e9e"
+      }
+    }
+  },
+  "audioProtocol": "capp.local-audio.v1",
+  "projectAudioProtocol": "capp.audio-project-client.v1",
+  "sourceUpdate": {
+    "archive": "voice-lab(20261014-105441).zip",
+    "sha256": "9ecfdd49e9fa8d695bdc2da3cddd5014c3a1046993fb10d3b8c8cf294c6f6723",
+    "scope": "Voice Lab only; inherited native references describe the existing 0.16.0 contract, not newly edited cApp sources."
+  }
+}
